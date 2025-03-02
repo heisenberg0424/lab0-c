@@ -54,8 +54,6 @@ element_t *new_element(char *value)
     memset(cpy, 0, len);
     memcpy(cpy, value, len);
 
-
-
     tmp->value = cpy;
     return tmp;
 }
