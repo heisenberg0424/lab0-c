@@ -140,13 +140,8 @@ int q_size(struct list_head *head)
     return len;
 }
 
-/* Delete the middle node in queue */
-bool q_delete_mid(struct list_head *head)
+struct list_head *q_find_mid(struct list_head *head)
 {
-    // https://leetcode.com/problems/delete-the-middle-node-of-a-linked-list/
-    if (!head || list_empty(head))
-        return false;
-
     struct list_head *slow, *fast;
     fast = head->prev;
 
@@ -157,8 +152,21 @@ bool q_delete_mid(struct list_head *head)
         if (fast->next == head || fast->next->next == head)
             break;
     }
-    list_del(slow);
-    element_free(container_of(slow, element_t, list));
+
+    return slow;
+}
+
+/* Delete the middle node in queue */
+bool q_delete_mid(struct list_head *head)
+{
+    // https://leetcode.com/problems/delete-the-middle-node-of-a-linked-list/
+    if (!head || list_empty(head))
+        return false;
+
+    struct list_head *mid;
+    mid = q_find_mid(head);
+    list_del(mid);
+    element_free(container_of(mid, element_t, list));
 
     return true;
 }
@@ -187,6 +195,8 @@ void q_reverseK(struct list_head *head, int k)
 
 /* Sort elements of queue in ascending/descending order */
 void q_sort(struct list_head *head, bool descend) {}
+
+void q_merge_sort(struct list_head *head, bool descend) {}
 
 /* Remove every node which has a node with a strictly less value anywhere to
  * the right side of it */
