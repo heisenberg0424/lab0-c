@@ -65,7 +65,7 @@ else
 endif
 
 check: qtest
-	./$< -v 3 -f traces/trace-eg.cmd
+	./$< -v 3 -f traces/trace-03-ops.cmd
 
 test: qtest scripts/driver.py
 	$(Q)scripts/check-repo.sh

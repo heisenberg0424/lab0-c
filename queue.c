@@ -185,7 +185,16 @@ void q_swap(struct list_head *head)
 }
 
 /* Reverse elements in queue */
-void q_reverse(struct list_head *head) {}
+void q_reverse(struct list_head *head)
+{
+    if (list_empty(head) || list_is_singular(head)) {
+        return;
+    }
+    struct list_head *safe, *itr;
+    list_for_each_safe (itr, safe, head) {
+        list_move(itr, head);
+    }
+}
 
 /* Reverse the nodes of the list k at a time */
 void q_reverseK(struct list_head *head, int k)
@@ -193,31 +202,84 @@ void q_reverseK(struct list_head *head, int k)
     // https://leetcode.com/problems/reverse-nodes-in-k-group/
 }
 
+void q_merge_two(struct list_head *left, struct list_head *right, bool descend)
+{
+    struct list_head *itr, *safe, *curr_left;
+    curr_left = left;
+
+    list_for_each_safe (itr, safe, right) {
+        if (descend) {
+            return;
+        } else {
+            while (curr_left->next != left &&
+                   strcmp(container_of(curr_left->next, element_t, list)->value,
+                          container_of(itr, element_t, list)->value) < 0) {
+                curr_left = curr_left->next;
+            }
+            list_del(itr);
+            list_add(itr, curr_left);
+        }
+        if (curr_left->next == left)
+            break;
+    }
+
+    if (!list_empty(right)) {
+        list_splice_tail(right, left);
+    }
+}
+
+void q_merge_sort(struct list_head *head, bool descend)
+{
+    if (list_empty(head) || list_is_singular(head))
+        return;
+
+    struct list_head *mid;
+    LIST_HEAD(tmp);
+
+    mid = q_find_mid(head);
+    list_cut_position(&tmp, head, mid);
+    q_merge_sort(&tmp, descend);
+    q_merge_sort(head, descend);
+
+    q_merge_two(head, &tmp, descend);
+}
+
 /* Sort elements of queue in ascending/descending order */
-void q_sort(struct list_head *head, bool descend) {}
+void q_sort(struct list_head *head, bool descend)
+{
+    q_merge_sort(head, descend);
+}
 
-void q_merge_sort(struct list_head *head, bool descend) {}
-
-/* Remove every node which has a node with a strictly less value anywhere to
- * the right side of it */
+/* Remove every node which has a node with a strictly less value
+ * anywhere to the right side of it */
 int q_ascend(struct list_head *head)
 {
     // https://leetcode.com/problems/remove-nodes-from-linked-list/
     return 0;
 }
 
-/* Remove every node which has a node with a strictly greater value anywhere to
- * the right side of it */
+/* Remove every node which has a node with a strictly greater value
+ * anywhere to the right side of it */
 int q_descend(struct list_head *head)
 {
     // https://leetcode.com/problems/remove-nodes-from-linked-list/
     return 0;
 }
 
-/* Merge all the queues into one sorted queue, which is in ascending/descending
- * order */
+/* Merge all the queues into one sorted queue, which is in
+ * ascending/descending order */
 int q_merge(struct list_head *head, bool descend)
 {
     // https://leetcode.com/problems/merge-k-sorted-lists/
-    return 0;
+    struct list_head *itr, *safe, *first;
+    first = head->next;
+    int size = container_of(first, queue_contex_t, chain)->size;
+    list_for_each_safe (itr, safe, head) {
+        if (itr == first)
+            continue;
+        q_merge_two(container_of(first, queue_contex_t, chain)->q,
+                    container_of(itr, queue_contex_t, chain)->q, descend);
+        size += container_of(itr, queue_contex_t, chain)->size;
+    }
+    return size;
 }

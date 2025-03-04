@@ -26,3 +26,7 @@ GPATH
 GRTAGS
 GSYMS
 GTAGS
+
+# gdb files
+peda-session-git.txt
+.gdb_history
