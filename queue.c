@@ -29,7 +29,7 @@ void element_free(element_t *element)
 void q_free(struct list_head *head)
 {
     element_t *iter, *safe;
-    list_for_each_entry_safe (iter, safe, head, list) {
+    list_for_each_entry_safe(iter, safe, head, list) {
         list_del(&iter->list);
         element_free(iter);
     }
@@ -135,7 +135,7 @@ int q_size(struct list_head *head)
     int len = 0;
     struct list_head *li;
 
-    list_for_each (li, head)
+    list_for_each(li, head)
         len++;
     return len;
 }
@@ -145,7 +145,7 @@ struct list_head *q_find_mid(struct list_head *head)
     struct list_head *slow, *fast;
     fast = head->prev;
 
-    list_for_each (slow, head) {
+    list_for_each(slow, head) {
         fast = fast->next->next;
         if (slow == head)
             break;
@@ -182,6 +182,15 @@ bool q_delete_dup(struct list_head *head)
 void q_swap(struct list_head *head)
 {
     // https://leetcode.com/problems/swap-nodes-in-pairs/
+    struct list_head *itr = head;
+    while (1) {
+        if (itr->next != head && itr->next->next != head) {
+            list_move(itr->next->next, head);
+            itr = itr->next->next;
+        } else {
+            break;
+        }
+    }
 }
 
 /* Reverse elements in queue */
@@ -191,7 +200,7 @@ void q_reverse(struct list_head *head)
         return;
     }
     struct list_head *safe, *itr;
-    list_for_each_safe (itr, safe, head) {
+    list_for_each_safe(itr, safe, head) {
         list_move(itr, head);
     }
 }
@@ -207,7 +216,7 @@ void q_merge_two(struct list_head *left, struct list_head *right, bool descend)
     struct list_head *itr, *safe, *curr_left;
     curr_left = left;
 
-    list_for_each_safe (itr, safe, right) {
+    list_for_each_safe(itr, safe, right) {
         if (descend) {
             return;
         } else {
@@ -274,7 +283,7 @@ int q_merge(struct list_head *head, bool descend)
     struct list_head *itr, *safe, *first;
     first = head->next;
     int size = container_of(first, queue_contex_t, chain)->size;
-    list_for_each_safe (itr, safe, head) {
+    list_for_each_safe(itr, safe, head) {
         if (itr == first)
             continue;
         q_merge_two(container_of(first, queue_contex_t, chain)->q,
